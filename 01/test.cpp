@@ -16,7 +16,7 @@ int main() {
 
         // check if memory is allocated
         if (memory_1 == nullptr) {
-            throw "FAIL";
+            throw "memory is not allocated";
         }
         char *memory_2 = allocator->alloc(5);
         std::cout << "Some memory is allocated on " <<
@@ -24,20 +24,24 @@ int main() {
 
         // check if memory is allocated on another adress
         if (memory_2 == nullptr || memory_2 == memory_1) {
-            throw "FAIL";
+            if (memory_2 == nullptr) {
+	    	throw "memory is not allocated";
+	    } else {
+		throw "memory is allocated on the same address";
+	    }
         }
         memory_1 = allocator->alloc(5);
 
         // check oversize allocation
         if (memory_1 != nullptr) {
-            throw "FAIL";
+            throw "memory is allocated in oversize zone";
         }
         allocator->reset();
         memory_1 = allocator->alloc(5);
 
         // check reset
         if (memory_1 == nullptr) {
-            throw "FAIL";
+            throw "reset has note been done";
         }
 
         allocator->reset();
@@ -48,7 +52,7 @@ int main() {
 
         // check that we can't reallocate before reset
         if (memory_3 != nullptr) {
-            throw "FAIL";
+            throw "reallocacation is made before reset";
         }
 
         std::cout << "SUCCESS" << std::endl;
