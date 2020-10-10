@@ -3,7 +3,10 @@ FLAGS = -std=c++17 -Wall
 
 all: test
 
-test: alloc.o test.o
+test: test_pre
+	./test
+
+test_pre: alloc.o test.o
 	$(CC) $(FLAGS) -o test alloc.o test.o
 
 alloc.o: allocator.cpp
