@@ -56,6 +56,8 @@ int main() {
         }
 
         std::cout << "SUCCESS" << std::endl;
+
+	delete allocator;
     } catch (const char *error) {
         std::cout << error << std::endl;
     }
