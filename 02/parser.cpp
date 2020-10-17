@@ -3,6 +3,7 @@
 //
 #include <string>
 #include <vector>
+#include <functional>
 #include "parser.h"
 
 beforeParser before_parser = nullptr;
@@ -58,33 +59,44 @@ bool isNumber(std::string token) {
     return true;
 }
 
-void parser(const char *text, std::vector<std::string> &string_res,
+void tokenHandler(std::string &token, std::vector<std::string> &string_res,
+                  std::vector<int> &int_res) {
+    if (isNumber(token)) {
+        if (do_if_number != nullptr) {
+            int number = std::stoi(token);
+            number = do_if_number(number);
+            int_res.push_back(number);
+        }
+    } else {
+        if (do_if_string != nullptr) {
+            string_res.push_back(do_if_string(token));
+        }
+    }
+}
+
+void parser(const std::string &text, std::vector<std::string> &string_res,
             std::vector<int> &int_res) {
     if (before_parser != nullptr) {
         string_res.push_back(before_parser());
     }
     std::string token;
     size_t size_of_token = 0;
-    do {
-        if (std::isspace(*text) || !(*text)) {
+    for (const auto &symbol : text) {
+        if (std::isspace(symbol)) {
             if (size_of_token > 0) {
-                if (isNumber(token)) {
-                    if (do_if_number != nullptr) {
-                        int_res.push_back(do_if_number(std::stoi(token)));
-                    }
-                } else {
-                    if (do_if_string != nullptr) {
-                        string_res.push_back(do_if_string(token));
-                    }
-                }
+                tokenHandler(token, string_res, int_res);
             }
             token = "";
             size_of_token = 0;
         } else {
-            token.push_back(*text);
+            token.push_back(symbol);
             size_of_token++;
         }
-    } while (*(text++));
+    }
+
+    if (size_of_token > 0) {
+        tokenHandler(token, string_res, int_res);
+    }
 
     if (after_parser != nullptr) {
         int_res.push_back(after_parser());
