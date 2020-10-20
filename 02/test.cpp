@@ -9,7 +9,7 @@
 #include "parser.h"
 
 void SpaceTest() {
-    const char *text = "\tfirst\n  second\t \tthird";
+    const std::string text = "\tfirst\n  second\t \tthird";
     std::vector<std::string> string_results;
     std::vector<int> int_results;
     setDoIfString([](std::string &token) -> std::string {
@@ -23,7 +23,7 @@ void SpaceTest() {
 };
 
 void IntTest() {
-    const char *text = "2 sdfj 7 ;asjfkd 5";
+    const std::string text = "2 sdfj 7 ;asjfkd 5";
     std::vector<std::string> string_results;
     std::vector<int> int_results;
     setDoIfNumber([](int num) -> int {
@@ -37,7 +37,7 @@ void IntTest() {
 };
 
 void StringTest() {
-    const char *text = "2 CaMel TyPe TeXt 7 5";
+    const std::string text = "2 CaMel TyPe TeXt 7 5";
     std::vector<std::string> string_results;
     std::vector<int> int_results;
     setDoIfString([](std::string &token) -> std::string {
@@ -53,7 +53,7 @@ void StringTest() {
 }
 
 void beforeTest() {
-    const char *text = "some text";
+    const std::string text = "some text";
     std::vector<std::string> string_results;
     std::vector<int> int_results;
     setBeforeParser([]() -> std::string {
@@ -65,7 +65,7 @@ void beforeTest() {
 }
 
 void afterTest() {
-    const char *text = "some text";
+    const std::string text = "some text";
     std::vector<std::string> string_results;
     std::vector<int> int_results;
     setAfterParser([]() -> int {
@@ -77,7 +77,7 @@ void afterTest() {
 }
 
 void resetTest() {
-    const char *text = "CaMel";
+    const std::string text = "CaMel";
     std::vector<std::string> string_results;
     std::vector<int> int_results;
     setDoIfString([](std::string &token) -> std::string {

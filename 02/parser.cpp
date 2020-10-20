@@ -80,21 +80,18 @@ void parser(const std::string &text, std::vector<std::string> &string_res,
         string_res.push_back(before_parser());
     }
     std::string token;
-    size_t size_of_token = 0;
     for (const auto &symbol : text) {
         if (std::isspace(symbol)) {
-            if (size_of_token > 0) {
+            if (!token.empty()) {
                 tokenHandler(token, string_res, int_res);
             }
             token = "";
-            size_of_token = 0;
         } else {
             token.push_back(symbol);
-            size_of_token++;
         }
     }
 
-    if (size_of_token > 0) {
+    if (!token.empty()) {
         tokenHandler(token, string_res, int_res);
     }
 
