@@ -5,8 +5,6 @@
 #ifndef MSU_CPP_AUTUMN_2020_MATRIX_H
 #define MSU_CPP_AUTUMN_2020_MATRIX_H
 
-#include <vector>
-
 class Matrix {
 private:
 
@@ -16,24 +14,29 @@ private:
     class Row {
     private:
         size_t numberOfColumns;
-        std::vector<int> numbers;
+        int *numbers;
     public:
         Row();
 
         Row(size_t numberOfColumns);
+
+        ~Row();
 
         int &operator[](size_t column);
 
         const int &operator[](size_t column) const;
     };
 
-    std::vector<Row> rows;
+    int **rows;
+
 public:
     Matrix(size_t numberOfRows, size_t numberOfColumns);
 
-    Row &operator[](size_t row);
+    ~Matrix();
 
-    const Row &operator[](size_t row) const;
+    int *operator[](size_t row);
+
+    const int *operator[](size_t row) const;
 
     size_t getNumberOfRows() const;
 

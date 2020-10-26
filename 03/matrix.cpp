@@ -12,7 +12,7 @@ Matrix::Row::Row() {};
 
 Matrix::Row::Row(size_t numberOfColumns) {
     this->numberOfColumns = numberOfColumns;
-    this->numbers = std::vector<int>(numberOfColumns);
+    this->numbers = new int[numberOfColumns];
 }
 
 int &Matrix::Row::operator[](size_t column) {
@@ -29,25 +29,36 @@ const int &Matrix::Row::operator[](size_t column) const {
     return numbers[column];
 }
 
+Matrix::Row::~Row() {
+    delete[] numbers;
+}
+
 
 Matrix::Matrix(size_t numberOfRows, size_t numberOfColumns) {
     this->numberOfColumns = numberOfColumns;
     this->numberOfRows = numberOfRows;
 
-    rows = std::vector<Row>(numberOfRows);
-    for (auto &row : rows) {
-        row = Row(numberOfColumns);
+    rows = new int *[numberOfRows];
+    for (size_t i = 0; i < numberOfRows; i++) {
+        rows[i] = new int[numberOfColumns];
     }
+
+    for (size_t i = 0; i < numberOfRows; ++i) {
+        for (size_t j = 0; j < numberOfColumns; ++j) {
+            rows[i][j] = 0;
+        }
+    }
+
 }
 
-Matrix::Row &Matrix::operator[](size_t row) {
+int *Matrix::operator[](size_t row) {
     if (row >= numberOfRows) {
         throw std::out_of_range("rows index out of range");
     }
     return rows[row];
 }
 
-const Matrix::Row &Matrix::operator[](size_t row) const {
+const int *Matrix::operator[](size_t row) const {
     if (row >= numberOfRows) {
         throw std::out_of_range("rows index out of range");
     }
@@ -89,6 +100,13 @@ bool Matrix::operator==(const Matrix &matrix) const {
 
 bool Matrix::operator!=(const Matrix &matrix) const {
     return !(*this == matrix);
+}
+
+Matrix::~Matrix() {
+    for (size_t i = 0; i < this->getNumberOfRows(); ++i) {
+        delete[] rows[i];
+    }
+    delete[] rows;
 }
 
 
