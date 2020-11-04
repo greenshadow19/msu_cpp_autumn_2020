@@ -10,13 +10,13 @@ BigInt::BigInt(int num) {
     sizeOfNumbers = 0;
     while (copyNum >= 1) {
         sizeOfNumbers++;
-        copyNum/=BASE;
+        copyNum /= BASE;
     }
     isNegative = (num < 0);
     numbers = new uint[sizeOfNumbers];
     num = isNegative ? -num : num;
     for (int i = 0; i < sizeOfNumbers; i++) {
-        numbers[i] = num%BASE;
+        numbers[i] = num % BASE;
         num /= BASE;
     }
 };
@@ -70,27 +70,32 @@ BigInt::~BigInt() {
     }
 }
 
-BigInt BigInt::operator=(const BigInt &bigNum) {
+BigInt &BigInt::operator=(const BigInt &bigNum) {
+
+    if (numbers != nullptr) {
+        delete[] numbers;
+    }
+
     sizeOfNumbers = bigNum.sizeOfNumbers;
     isNegative = bigNum.isNegative;
+    
     numbers = new uint[sizeOfNumbers];
     for (size_t i = 0; i < sizeOfNumbers; ++i) {
         numbers[i] = bigNum.numbers[i];
     }
-
     return (*this);
 }
 
-BigInt BigInt::operator=(BigInt &&bigNum) {
+BigInt &BigInt::operator=(BigInt &&bigNum) {
+
     if (sizeOfNumbers > 0) {
         numbers = nullptr;
     }
+
     sizeOfNumbers = bigNum.sizeOfNumbers;
     isNegative = bigNum.isNegative;
-    numbers = new uint[sizeOfNumbers];
-    for (size_t i = 0; i < sizeOfNumbers; ++i) {
-        numbers[i] = bigNum.numbers[i];
-    }
+    numbers = bigNum.numbers;
+
     bigNum.sizeOfNumbers = 0;
     bigNum.numbers = nullptr;
 
@@ -105,6 +110,10 @@ size_t BigInt::getSize() const {
     return sizeOfNumbers;
 }
 
+
+bool BigInt::getIsNegative() const {
+    return isNegative;
+}
 
 BigInt BigInt::addWithoutSign(const BigInt &bigNum) const {
     BigInt result;

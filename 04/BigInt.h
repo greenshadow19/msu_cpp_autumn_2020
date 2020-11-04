@@ -7,7 +7,7 @@
 
 #include <cstdio>
 #include <string>
-#include <ostream>
+#include <sstream>
 #include <iomanip>
 
 class BigInt {
@@ -41,17 +41,15 @@ public:
 
     ~BigInt();
 
-    BigInt operator=(const BigInt &bigNum);
+    BigInt &operator=(const BigInt &bigNum);
 
-    BigInt operator=(BigInt &&bigNum);
+    BigInt &operator=(BigInt &&bigNum);
 
     uint *getNumbers() const;
 
     size_t getSize() const;
 
-    bool getIsNegative() const {
-        return isNegative;
-    }
+    bool getIsNegative() const;
 
     BigInt operator-() const;
 
