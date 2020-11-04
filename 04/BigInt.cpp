@@ -92,6 +92,10 @@ BigInt &BigInt::operator=(const BigInt &bigNum) {
 
 BigInt &BigInt::operator=(BigInt &&bigNum) {
 
+    if (bigNum == *this) {
+        return *this;
+    }
+
     if (numbers!= nullptr) {
         delete[] numbers;
     }
