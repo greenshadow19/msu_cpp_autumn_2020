@@ -37,7 +37,7 @@ public:
 
     BigInt(BigInt &&bigNumber);
 
-    BigInt(std::string stringNumber);
+    BigInt(const std::string& stringNumber);
 
     ~BigInt();
 

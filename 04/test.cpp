@@ -48,6 +48,7 @@ void stringConstructorTest() {
 
 void moveTest() {
     BigInt a("132432078458712346973421");
+    a = a;
     BigInt moveA = std::move(a);
     assert(moveA == BigInt("132432078458712346973421"));
 }

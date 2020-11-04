@@ -34,7 +34,7 @@ BigInt::BigInt(BigInt &&bigNumber) : numbers(bigNumber.numbers), sizeOfNumbers(b
     bigNumber.numbers = nullptr;
 }
 
-BigInt::BigInt(std::string stringNumber) {
+BigInt::BigInt(const std::string &stringNumber) {
     int initialPosition = 0;
     if (stringNumber[0] == '-') {
         initialPosition++;
@@ -72,13 +72,17 @@ BigInt::~BigInt() {
 
 BigInt &BigInt::operator=(const BigInt &bigNum) {
 
+    if (bigNum == *this) {
+        return *this;
+    }
+
     if (numbers != nullptr) {
         delete[] numbers;
     }
 
     sizeOfNumbers = bigNum.sizeOfNumbers;
     isNegative = bigNum.isNegative;
-    
+
     numbers = new uint[sizeOfNumbers];
     for (size_t i = 0; i < sizeOfNumbers; ++i) {
         numbers[i] = bigNum.numbers[i];
@@ -88,8 +92,8 @@ BigInt &BigInt::operator=(const BigInt &bigNum) {
 
 BigInt &BigInt::operator=(BigInt &&bigNum) {
 
-    if (sizeOfNumbers > 0) {
-        numbers = nullptr;
+    if (numbers!= nullptr) {
+        delete[] numbers;
     }
 
     sizeOfNumbers = bigNum.sizeOfNumbers;
