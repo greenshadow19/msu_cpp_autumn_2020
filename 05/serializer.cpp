@@ -33,7 +33,7 @@ Error Deserializer::handler(uint64_t &number) {
             return Error::CorruptedArchive;
         }
         number = std::stoull(stringNumber);
-    } catch (const std::exception &exception) {
+    } catch (const std::logic_error &exception) {
         return Error::CorruptedArchive;
     }
     return Error::NoError;

@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -std=c++17 -Wall -fsanitize=address
+FLAGS = -std=c++11 -Wall -fsanitize=address
 
 all: test_pre 
 
