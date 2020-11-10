@@ -32,9 +32,9 @@ Error Deserializer::handler(uint64_t &number) {
         if (stringNumber[0] == '-') {
             return Error::CorruptedArchive;
         }
-            number = std::stoull(stringNumber);
-        } catch (const std::exception &exception) {
-            return Error::CorruptedArchive;
-        }
-        return Error::NoError;
+        number = std::stoull(stringNumber);
+    } catch (const std::exception &exception) {
+        return Error::CorruptedArchive;
     }
+    return Error::NoError;
+}
