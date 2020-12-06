@@ -87,8 +87,7 @@ public:
 
         T *newData = allocator.allocate(sizeToReserve);
         for (size_t i = 0; i < sizeOfVector; ++i)
-            allocator.construct(newData + i, data[i], 1);
-
+            newData[i] = std::move(data[i]);
         allocator.destroy(data, sizeOfVector);
         allocator.deallocate(data, capacityOfVector);
         data = newData;
