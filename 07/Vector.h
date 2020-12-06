@@ -5,6 +5,8 @@
 #include "Allocator.h"
 #include "Iterator.h"
 
+
+
 template<class T, class AllocT = Allocator<T> >
 class Vector {
     size_t sizeOfVector;
@@ -23,6 +25,22 @@ public:
     Vector(size_t aSizeOfVector, const T &value) : sizeOfVector(aSizeOfVector), capacityOfVector(aSizeOfVector) {
         data = allocator.allocate(aSizeOfVector);
         allocator.construct(data, value, aSizeOfVector);
+    }
+
+    Vector(const Vector<T> &vector) : sizeOfVector(vector.size()), capacityOfVector(vector.capacity()) {
+        data = allocator.allocate(this->sizeOfVector);
+        for (size_t i = 0; i < vector.size(); i++) {
+            data[i] = vector[i];
+        }
+    }
+
+    Vector(const Vector<T> &&otherVector) : sizeOfVector(otherVector.size()), capacityOfVector(otherVector.capacity()) {
+        data = allocator.allocate(this->sizeOfVector);
+        for (size_t i = 0; i < otherVector.size(); i++) {
+            data[i] = otherVector[i];
+        }
+        allocator.destroy(otherVector.data, sizeOfVector);
+        allocator.deallocate(otherVector.data, capacityOfVector);
     }
 
     ~Vector() {
@@ -53,6 +71,7 @@ public:
 
     void push_back(const T &value) {
         resize(sizeOfVector + 1, value);
+        data[sizeOfVector - 1] = std::move(value);
     }
 
     void pop_back() {
@@ -69,27 +88,11 @@ public:
         T *newData = allocator.allocate(sizeToReserve);
         for (size_t i = 0; i < sizeOfVector; ++i)
             allocator.construct(newData + i, data[i], 1);
+
         allocator.destroy(data, sizeOfVector);
         allocator.deallocate(data, capacityOfVector);
         data = newData;
         capacityOfVector = sizeToReserve;
-    }
-
-    void resize(size_t newSizeOfVector) {
-        if (newSizeOfVector == sizeOfVector) {
-            return;
-        }
-        if (newSizeOfVector < sizeOfVector) {
-            allocator.destroy(data + newSizeOfVector, sizeOfVector - newSizeOfVector);
-            sizeOfVector = newSizeOfVector;
-            return;
-        }
-
-        if (newSizeOfVector > capacityOfVector)
-            reserve(newSizeOfVector > 2 * capacityOfVector ? newSizeOfVector : 2 * capacityOfVector);
-
-        allocator.construct(data + sizeOfVector, newSizeOfVector - sizeOfVector);
-        sizeOfVector = newSizeOfVector;
     }
 
     void resize(size_t newSizeOfVector, const T &val) {
@@ -102,14 +105,65 @@ public:
 
         if (newSizeOfVector > capacityOfVector)
             reserve(newSizeOfVector > 2 * capacityOfVector ? newSizeOfVector : 2 * capacityOfVector);
-
         allocator.construct(data + sizeOfVector, val, newSizeOfVector - sizeOfVector);
         sizeOfVector = newSizeOfVector;
+    }
+
+    void resize(size_t newSizeOfVector) {
+        if (newSizeOfVector == sizeOfVector) return;
+        if (newSizeOfVector < sizeOfVector) {
+            allocator.destroy(data + newSizeOfVector, sizeOfVector - newSizeOfVector);
+            sizeOfVector = newSizeOfVector;
+            return;
+        }
+
+        if (newSizeOfVector > capacityOfVector)
+            reserve(newSizeOfVector > 2 * capacityOfVector ? newSizeOfVector : 2 * capacityOfVector);
+        allocator.construct(data + sizeOfVector, newSizeOfVector - sizeOfVector);
+        sizeOfVector = newSizeOfVector;
+    }
+
+    template<typename... ArgsT>
+    void emplace_back(ArgsT&&... args) {
+        if (sizeOfVector==capacityOfVector) {
+            resize(sizeOfVector + 1);
+        }
+        data[sizeOfVector-1] = T(args...);
     }
 
     void clear() noexcept {
         allocator.destroy(data, sizeOfVector);
         sizeOfVector = 0;
+    }
+
+    Vector &operator=(const Vector<T> &otherVector) {
+        if (otherVector == (*this)) {
+            return *this;
+        }
+        this->sizeOfVector = otherVector.size();
+        this->capacityOfVector = otherVector.capacity();
+        this->data = allocator.allocate(sizeOfVector);
+        for (size_t i = 0; i < sizeOfVector; i++) {
+            this->data[i] = otherVector[i];
+        }
+        return *this;
+    }
+
+    Vector &operator=(Vector<T> &&otherVector) {
+        if (otherVector == (*this)) {
+            return *this;
+        }
+        this->sizeOfVector = otherVector.size();
+        this->capacityOfVector = otherVector.capacity();
+        this->data = allocator.allocate(sizeOfVector);
+        for (size_t i = 0; i < sizeOfVector; i++) {
+            this->data[i] = otherVector[i];
+        }
+
+        allocator.destroy(otherVector.data, sizeOfVector);
+        allocator.deallocate(otherVector.data, capacityOfVector);
+
+        return *this;
     }
 
     T &operator[](size_t i) {

@@ -15,13 +15,14 @@ void emptyClearTest() {
     assert(vectorOfInt.empty());
 
     vectorOfInt.push_back(9);
-    vectorOfInt.pop_back();
+    vectorOfInt.clear();
     assert(vectorOfInt.empty());
 }
 
 void stringVectorTest() {
     Vector<std::string> vectorOfString;
-    vectorOfString.push_back("Hello, World!");
+    std::string hello = "Hello, World!";
+    vectorOfString.push_back(hello);
     assert(vectorOfString[0] == "Hello, World!");
 }
 
@@ -31,9 +32,15 @@ void iteratorTest() {
         vectorOfInt.push_back(i);
     }
     int count = 0;
-    for (auto iter = vectorOfInt.begin(); iter!=vectorOfInt.end(); iter++) {
-        assert(*iter==(count++));
+    for (auto iter = vectorOfInt.begin(); iter != vectorOfInt.end(); iter++) {
+        assert(*iter == (count++));
     }
+}
+
+void emplaceBackTest() {
+    Vector<int> vectorOfInt;
+    vectorOfInt.emplace_back(9);
+    assert(vectorOfInt[0] == 9);
 }
 
 int main() {
@@ -41,6 +48,7 @@ int main() {
     emptyClearTest();
     stringVectorTest();
     iteratorTest();
+    emplaceBackTest();
     std::cout << "Success" << std::endl;
     return 0;
 }
