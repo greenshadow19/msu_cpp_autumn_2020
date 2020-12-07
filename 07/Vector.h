@@ -34,10 +34,10 @@ public:
         }
     }
 
-    Vector(const Vector<T> &&otherVector) : sizeOfVector(otherVector.size()), capacityOfVector(otherVector.capacity()) {
+    Vector(Vector<T> &&otherVector) : sizeOfVector(otherVector.size()), capacityOfVector(otherVector.capacity()) {
         data = allocator.allocate(this->sizeOfVector);
         for (size_t i = 0; i < otherVector.size(); i++) {
-            data[i] = otherVector[i];
+            data[i] = std::move(otherVector[i]);
         }
         allocator.destroy(otherVector.data, sizeOfVector);
         allocator.deallocate(otherVector.data, capacityOfVector);
@@ -71,7 +71,7 @@ public:
 
     void push_back(const T &value) {
         resize(sizeOfVector + 1, value);
-        data[sizeOfVector - 1] = std::move(value);
+        data[sizeOfVector - 1] = value;
     }
 
     void pop_back() {
@@ -127,7 +127,7 @@ public:
         if (sizeOfVector==capacityOfVector) {
             resize(sizeOfVector + 1);
         }
-        data[sizeOfVector-1] = T(args...);
+        data[sizeOfVector-1] = T(std::move(args)...);
     }
 
     void clear() noexcept {
@@ -152,11 +152,12 @@ public:
         if (otherVector == (*this)) {
             return *this;
         }
+
         this->sizeOfVector = otherVector.size();
         this->capacityOfVector = otherVector.capacity();
         this->data = allocator.allocate(sizeOfVector);
         for (size_t i = 0; i < sizeOfVector; i++) {
-            this->data[i] = otherVector[i];
+            this->data[i] = std::move(otherVector[i]);
         }
 
         allocator.destroy(otherVector.data, sizeOfVector);
